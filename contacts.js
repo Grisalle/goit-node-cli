@@ -29,13 +29,23 @@ async function removeContact(contactId) {
     return null;
   }
 
-  const removeContact = contacts.filter((contact) => contact.id === contactId);
+  const removeContact = contacts.find((contact) => contact.id === contactId);
+
+  const newContacts = contacts.filter((contact) => contact.id !== contactId);
+
+  await fs.writeFile(contactsPath, JSON.stringify(newContacts, null, 2));
 
   return removeContact;
 }
 
 async function addContact(name, email, phone) {
+  const contacts = await listContacts();
+
   const newContact = { name, email, phone, id: crypto.randomUUID() };
+
+  contacts.push(newContact);
+
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 
   return newContact;
 }
